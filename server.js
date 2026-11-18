@@ -81,6 +81,11 @@ const PORT = 3000;
 const FOLDER = process.argv[2] || 'public';
 const ROOT = path.join(__dirname, FOLDER);
 
+// каталог читаем с диска один раз, при запуске сервера
+const file = path.join(__dirname, 'products.json');
+const products = JSON.parse(fs.readFileSync(file, 'utf8'));
+console.log('Каталог в памяти: ' + products.length + ' товаров');
+
 
 const server = http.createServer(function (req, res) {
   // разбираем адрес на путь и параметры после знака вопроса
@@ -89,10 +94,7 @@ const server = http.createServer(function (req, res) {
 
   // особый адрес: отдаём не файл сайта, а данные
   if (address.pathname === '/api/products') {
-    //console.time('Ответ каталога');
-    const file = path.join(__dirname, 'products.json');
-    const all = JSON.parse(fs.readFileSync(file, 'utf8'));
-
+    const all = products;
 
     // оставляем только товары, подходящие под поиск
     let search = address.searchParams.get('search') || '';
